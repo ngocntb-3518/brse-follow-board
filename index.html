@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bảng theo dõi cho BrSE</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#fff; --text:#1b2330; --muted:#5d6878; --line:#e3e7ee;
+  --accent:#2f5fd0; --accent-soft:#e8eefc; --ok:#1f8a4c; --ok-soft:#e5f5eb;
+  --warn:#b4570a; --warn-soft:#fdf0e2; --off:#b3261e; --off-soft:#fdeceb;
+  --code:#f1f3f7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161d; --surface:#1a2029; --text:#e6eaf1; --muted:#9aa5b5; --line:#2a3240;
+    --accent:#7aa2ff; --accent-soft:#1e2a45; --ok:#5fcf8a; --ok-soft:#173225;
+    --warn:#f0a35a; --warn-soft:#3a2a17; --off:#ff8a82; --off-soft:#3b1f1d; --code:#222a36;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.dates{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.chip.off{background:var(--off-soft);color:var(--off)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+[role=tablist]{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+[role=tab]{appearance:none;border:0;background:none;color:var(--muted);cursor:pointer;
+  padding:10px 16px;font:inherit;font-weight:600;border-bottom:3px solid transparent;white-space:nowrap}
+[role=tab]:hover{color:var(--text)}
+[role=tab][aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+[role=tab]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tab-sub{display:block;font-size:12px;font-weight:400}
+[role=tabpanel]{padding-top:20px}
+[role=tabpanel][hidden]{display:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.card h2{font-size:16px;margin:0 0 10px}
+.card p{margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat small{color:var(--muted);display:block}
+.stat b{font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+tr.hl td{background:var(--off-soft)}
+.tbl{overflow-x:auto}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo li{padding:6px 0}
+ul.todo label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+ul.todo input{margin-top:5px;width:16px;height:16px;accent-color:var(--accent)}
+ul.todo input:checked+span{color:var(--muted);text-decoration:line-through}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 6px;border-radius:4px;font-size:13px}
+.note{background:var(--warn-soft);color:var(--text);border-left:4px solid var(--warn);
+  padding:10px 14px;border-radius:6px;margin:10px 0}
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow:auto;max-height:340px;font-size:12.5px;line-height:1.5}
+button.copy{font:inherit;font-size:13px;padding:4px 12px;border-radius:6px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);cursor:pointer;margin:8px 0}
+img{max-width:100%;border:1px solid var(--line);border-radius:8px}
+.steps{padding-left:20px}
+.steps li{margin:8px 0}
+@media (max-width:560px){ h1{font-size:19px} [role=tab]{padding:8px 12px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bảng theo dõi cho team BrSE</h1>
+  <div class="dates">
+    <span>PM OFF:</span>
+    <span class="chip off">11/2 (Hai)</span><span class="chip off">11/4 (Tư)</span><span class="chip off">11/5 (Năm)</span>
+    <span class="chip">11/3 lễ Nhật, PM có mặt</span><span class="chip ok">11/6 PM quay lại</span>
+  </div>
+  <div class="dates" style="margin-bottom:20px">
+    <span>30/10 (Sáu):</span>
+    <span class="chip off">BE OFF</span><span class="chip warn">PM có thể trễ MTG release</span>
+  </div>
+  <p class="sub">Trang tóm tắt công khai. Tên người, link và chi tiết nội bộ không đăng ở đây, xem trên Backlog theo mã ticket.</p>
+
+  <div role="tablist" aria-label="Các task">
+    <button role="tab" id="t-rel" aria-controls="p-rel" aria-selected="true">Release 2.0.26.3<span class="tab-sub">Ngày mai 30/10</span></button>
+    <button role="tab" id="t-1644" aria-controls="p-1644" aria-selected="false" tabindex="-1">ARWELL-1644<span class="tab-sub">Lỗi camera iOS 27</span></button>
+    <button role="tab" id="t-1635" aria-controls="p-1635" aria-selected="false" tabindex="-1">ARWELL-1635<span class="tab-sub">Báo log hằng ngày</span></button>
+    <button role="tab" id="t-1636" aria-controls="p-1636" aria-selected="false" tabindex="-1">ARWELL-1636<span class="tab-sub">LIFF SDK</span></button>
+    <button role="tab" id="t-1639" aria-controls="p-1639" aria-selected="false" tabindex="-1">ARWELL-1639<span class="tab-sub">STAMP 1.5</span></button>
+  </div>
+
+  <!-- ================= Release 2.0.26.3 ================= -->
+  <section role="tabpanel" id="p-rel" aria-labelledby="t-rel">
+    <div class="grid">
+      <div class="stat"><small>Release</small><b>Hotfix 2.0.26.3, ngày 30/10 (Sáu)</b></div>
+      <div class="stat"><small>Phạm vi</small><b>Chỉ ARWELL-1635, chỉ FE LIFF</b></div>
+      <div class="stat"><small>Thời gian dự kiến</small><b>Khoảng 30 phút</b></div>
+      <div class="stat"><small>Trạng thái ARWELL-1635</small><b>Chờ phản ánh PRD</b></div>
+    </div>
+    <div class="note" style="margin-top:0;margin-bottom:16px">
+      <b>Nhờ mọi người giúp:</b> PM có thể trễ MTG release ngày 30/10, nên nhờ một bạn đối ứng release trước cho chắc ăn. Nhờ mọi người đọc các thông tin bên dưới để nắm nội dung cần làm.<br>
+      Người đối ứng release: ba bạn đang được chốt theo thứ tự (tên xem nội bộ).
+    </div>
+    <div class="card">
+      <h2>Bối cảnh</h2>
+      <p><b>Có:</b> FE LIFF (ARWELL-1635): đăng ký mới qua QR check-in của một cửa hàng thì nguồn vào được ghi đúng. Kèm thêm một biến môi trường trên PRD.</p>
+      <p><b>Không có:</b> BE, FE WEB / Admin, DA. Không đổi DB schema. Vì BE không đổi nên việc BE OFF 30/10 không ảnh hưởng release này.</p>
+    </div>
+    <div class="card">
+      <h2>Các bước release</h2>
+      <ol class="steps">
+        <li><b>Thêm biến môi trường trước khi merge PR</b> vào Environment production của repo FE (tên biến và giá trị xem FE Release Checklist nội bộ). Giá trị được nhúng lúc build nên phải thêm <b>trước</b> khi merge, nếu không sẽ không có hiệu lực.</li>
+        <li><b>Merge PR vào <code>main</code></b> (PR release, xem mục "Còn mở").</li>
+        <li><b>Kiểm tra deploy thành công</b> ở GitHub Actions và kiểm tra Image Tag.</li>
+        <li><b>AR kiểm tra sau release:</b> đăng ký mới qua QR check-in phải ghi đúng nguồn vào.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Việc cần làm</h2>
+      <ul class="todo" data-key="rel">
+        <li><label><input type="checkbox"><span>Chốt người đối ứng release (theo thứ tự đã nêu)</span></label></li>
+        <li><label><input type="checkbox"><span>Có PR release vào <code>main</code> và gắn link vào Release note, Epic, Story</span></label></li>
+        <li><label><input type="checkbox"><span>JP review và approve PR</span></label></li>
+        <li><label><input type="checkbox"><span>Thêm biến môi trường vào Environment production (trước khi merge)</span></label></li>
+        <li><label><input type="checkbox"><span>FE Release Checklist: mục env đã sửa từ "No" thành "Yes" kèm các bước thêm biến</span></label></li>
+        <li><label><input type="checkbox"><span>Merge PR vào main, kiểm tra deploy và Image Tag</span></label></li>
+        <li><label><input type="checkbox"><span>Báo AR kiểm tra sau release, và báo kết quả lên ticket</span></label></li>
+        <li><label><input type="checkbox"><span>Cập nhật trạng thái ARWELL-1635 và đóng Epic sau khi AR xác nhận</span></label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Còn mở</h2>
+      <div class="tbl"><table>
+        <tr><th>Việc</th><th>Ghi chú</th></tr>
+        <tr class="hl"><td>Người đối ứng release</td><td>Đang chốt theo thứ tự ba bạn</td></tr>
+        <tr class="hl"><td>Link PR release vào main</td><td>Chưa có. Release note và tin nhờ JP review đang để chỗ trống</td></tr>
+        <tr class="hl"><td>JP review PR</td><td>Cần gửi tin nhờ review khi có PR</td></tr>
+        <tr><td>Giờ release trong ngày 30/10</td><td>Chưa ghi trong tài liệu</td></tr>
+        <tr><td>Phương án rollback</td><td>Có trong checklist task FE (dev FE soạn)</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Tài liệu liên quan</h2>
+      <div class="tbl"><table>
+        <tr><td>Ticket gốc</td><td>ARWELL-1635 (Backlog)</td></tr>
+        <tr><td>Release note</td><td>Trên Backlog (Document), xem nội bộ</td></tr>
+        <tr><td>FE Release Checklist, GitHub Epic / Story / Task</td><td>Xem nội bộ</td></tr>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ================= 1644 ================= -->
+  <section role="tabpanel" id="p-1644" aria-labelledby="t-1644" hidden>
+    <div class="grid">
+      <div class="stat"><small>Việc</small><b>Tái hiện lỗi camera trên iOS khách chỉ định</b></div>
+      <div class="stat"><small>Thiết bị / OS của khách</small><b>iPhone 18 Pro, iOS 27.0</b></div>
+      <div class="stat"><small>Trạng thái Backlog</small><b>Chưa xử lý, ưu tiên cao</b></div>
+      <div class="stat"><small>Người nhờ</small><b>AR (tạo ngày 27/10)</b></div>
+    </div>
+    <div class="note" style="margin-top:0;margin-bottom:16px">
+      <b>Nhờ mọi người giúp:</b> ticket liên quan LIFF, PM OFF nên nhờ một BrSE khác phụ trách. Việc chính là <b>tái hiện lại lỗi trên đúng phiên bản OS khách dùng</b>.<br>
+      BrSE phụ trách (đề xuất): bạn nắm phần check-in.
+    </div>
+    <div class="card">
+      <h2>Bối cảnh</h2>
+      <p>Trong LINE, khách bấm nút quét QR check-in, chọn 「今回のみ許可する」 khi hỏi quyền camera, nhưng <b>màn hình đọc mã đen kịt, biểu tượng tròn quay mãi, camera không bật</b>.</p>
+      <p>Chỉ xảy ra với app này, các app khác dùng camera bình thường. Khách mới đổi máy sang <b>iPhone 18 Pro (iOS 27.0)</b> và thắc mắc app chưa hỗ trợ iOS mới nhất chăng. Ticket chưa có comment nào.</p>
+    </div>
+    <div class="card">
+      <h2>Đã thử gì</h2>
+      <div class="tbl"><table>
+        <tr><th>Cách</th><th>Kết quả của khách</th></tr>
+        <tr><td>Quyền camera của LINE trong cài đặt iPhone</td><td>Đã bật sẵn</td></tr>
+        <tr class="hl"><td>① Nút quét QR check-in trong menu LINE của app</td><td><b>Lỗi:</b> màn hình đen, biểu tượng tròn quay mãi. Trước đây vẫn check-in được bằng cách này</td></tr>
+        <tr><td>② Máy đọc QR có sẵn của LINE</td><td><b>Check-in được</b></td></tr>
+        <tr><td>③ Camera điện thoại / ④ app đọc QR khác</td><td>Khách chưa nói đã thử chưa</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Gợi ý để điều tra thêm (suy ra, chưa xác nhận)</h2>
+      <ul>
+        <li>Nút ① là chức năng quét QR của LIFF (<code>scanCodeV2</code>). Cách ② là máy đọc của chính LINE nên không đi qua LIFF, có thể vì vậy nó chạy được.</li>
+        <li>LIFF đang dùng SDK 2.21.4. Bản 2.31.2 sắp release 11/11 (ARWELL-1636) cũng có test check-in. Nếu có UAT (2.31.2) và STG (2.21.4) thì thử cả hai để xem lỗi có khác nhau không.</li>
+        <li>Nếu không tái hiện được trên iOS 27.0, hỏi khách phiên bản LINE đang dùng và đã thử lại sau khi cập nhật chưa.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Việc cần làm</h2>
+      <ul class="todo" data-key="1644">
+        <li><label><input type="checkbox"><span>Xác nhận BrSE nhận việc này</span></label></li>
+        <li><label><input type="checkbox"><span>Tìm thiết bị iOS 27.0 (nhờ QA hỏi xem team có máy không)</span></label></li>
+        <li><label><input type="checkbox"><span>Tái hiện lỗi: mở LINE, bấm nút quét QR check-in, chọn 「今回のみ許可する」, xem màn hình đọc mã có đen không</span></label></li>
+        <li><label><input type="checkbox"><span>Ghi lại: có tái hiện được không, iOS/phiên bản LINE, môi trường đang thử (kèm ảnh/video nếu được)</span></label></li>
+        <li><label><input type="checkbox"><span>So sánh với cách ② (máy đọc QR của LINE) trên cùng máy</span></label></li>
+        <li><label><input type="checkbox"><span>Báo kết quả lên ARWELL-1644 cho AR</span></label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Còn mở</h2>
+      <div class="tbl"><table>
+        <tr><th>Việc</th><th>Ghi chú</th></tr>
+        <tr class="hl"><td>BrSE phụ trách</td><td>Dự kiến một bạn, chờ xác nhận</td></tr>
+        <tr class="hl"><td>Thiết bị iOS 27.0</td><td>Chưa rõ team có máy không</td></tr>
+        <tr><td>Hạn trả lời AR</td><td>Chưa thấy ghi trên ticket</td></tr>
+        <tr><td>Phiên bản LINE của khách</td><td>Ticket chưa nói</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Tài liệu liên quan</h2>
+      <div class="tbl"><table>
+        <tr><td>Ticket</td><td>ARWELL-1644 (Backlog)</td></tr>
+        <tr><td>Liên quan LIFF</td><td>Tab ARWELL-1636 (nâng LIFF SDK, có test check-in)</td></tr>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ================= 1635 ================= -->
+  <section role="tabpanel" id="p-1635" aria-labelledby="t-1635" hidden>
+    <div class="grid">
+      <div class="stat"><small>Việc</small><b>Báo data log cho khách mỗi ngày</b></div>
+      <div class="stat"><small>Giờ gửi khách</small><b>~13:30 JST (11:30 VN)</b></div>
+      <div class="stat"><small>Kéo dài đến</small><b>Khi khách báo không cần nữa</b></div>
+      <div class="stat"><small>Báo cho</small><b>AR, trong ticket 1635</b></div>
+    </div>
+    <div class="note" style="margin-top:0;margin-bottom:16px">
+      <b>Nhờ mọi người giúp:</b> BE chạy query như bình thường. Nhờ BrSE dự phòng, tự chạy được khi BE cũng OFF (hướng dẫn chi tiết xem nội bộ).<br>
+      Ngày 30/10 BE OFF nên PM chạy.
+    </div>
+    <div class="card">
+      <h2>Bối cảnh</h2>
+      <p>AR muốn mỗi ngày nhận danh sách user mới đăng ký của một nhóm cửa hàng, để phát hiện user không nhận được tin chào, điểm tặng hoặc rich menu lỗi và xử lý thủ công.</p>
+      <p>Gửi toàn bộ user thỏa điều kiện (AR tự lọc). Khung giờ đúng JST: từ 08:00 hôm trước đến 07:59:59 hôm nay.</p>
+    </div>
+    <div class="card">
+      <h2>Lịch</h2>
+      <div class="tbl"><table>
+        <tr><th>Ngày</th><th>Ghi chú</th></tr>
+        <tr><td>10/30 (Sáu)</td><td>BE OFF, PM chạy query và cập nhật sheet</td></tr>
+        <tr><td>11/2 (Hai)</td><td><b>Sáng thứ Hai lấy cả T7 và CN</b> (khung 3 ngày thay vì 1 ngày)</td></tr>
+        <tr><td>11/3 (Ba)</td><td>PM có mặt</td></tr>
+        <tr><td>11/4 (Tư)</td><td>Chạy bình thường</td></tr>
+        <tr><td>11/5 (Năm)</td><td>Chạy bình thường</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Cách làm mỗi ngày</h2>
+      <ol class="steps">
+        <li>Sau 08:00 JST (06:00 VN), chạy query log theo hướng dẫn nội bộ. Nhớ đặt <b>Time range</b> là "Set in query" (nếu để mặc định "Last 24 hours" thì log bị cắt thiếu).</li>
+        <li>Xuất CSV, tạo sheet mới của ngày trong file khách, dán đúng format các sheet trước. Giữ nguyên toàn bộ dòng, kể cả dòng không lỗi.</li>
+        <li>Kiểm nhanh: có dòng, thời gian nằm trong khung 08:00 đến 07:59:59 JST, chỉ có đúng các nhóm cửa hàng cần báo, có cột báo đăng ký lại.</li>
+        <li>Báo AR trong ticket khoảng 13:30 JST. Nếu trễ hoặc có vấn đề thì báo sớm kèm giờ dự kiến.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Việc cần làm</h2>
+      <ul class="todo" data-key="1635">
+        <li><label><input type="checkbox"><span>Sau 08:00 JST (06:00 VN), chạy query</span></label></li>
+        <li><label><input type="checkbox"><span>Xuất CSV, tạo sheet mới của ngày trong file khách, dán đúng format</span></label></li>
+        <li><label><input type="checkbox"><span>Kiểm nhanh kết quả</span></label></li>
+        <li><label><input type="checkbox"><span>Báo AR trong ticket 1635 khoảng 13:30 JST</span></label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Còn mở</h2>
+      <div class="tbl"><table>
+        <tr><th>Việc</th><th>Ghi chú</th></tr>
+        <tr class="hl"><td>11/3 (lễ Nhật) có gửi report không</td><td>Chưa rõ, PM có mặt ngày này</td></tr>
+        <tr><td>Thời hạn gửi report</td><td>Đến khi khách báo không cần nữa</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Tài liệu liên quan</h2>
+      <div class="tbl"><table>
+        <tr><td>Ticket</td><td>ARWELL-1635 (Backlog)</td></tr>
+        <tr><td>Sheet gửi khách, hướng dẫn chạy query</td><td>Xem nội bộ</td></tr>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ================= 1636 ================= -->
+  <section role="tabpanel" id="p-1636" aria-labelledby="t-1636" hidden>
+    <div class="grid">
+      <div class="stat"><small>Việc</small><b>Nâng LIFF SDK 2.21.4 → 2.31.2 (kèm Node 16 → 20)</b></div>
+      <div class="stat"><small>Release</small><b>11/11 (Tư), hotfix 2.0.26.4</b></div>
+      <div class="stat"><small>FE</small><b>Xong</b></div>
+      <div class="stat"><small>Lưu ý</small><b>Schedule chặt, cần theo dõi sát</b></div>
+    </div>
+    <div class="note" style="margin-top:0;margin-bottom:16px">
+      <b>Nhờ mọi người giúp:</b> theo dõi tiến độ QA, hỏi QA có vướng gì không và cần đối ứng gì thêm. Team VN tự chủ động được hầu hết mọi thứ, mọi người chủ yếu nắm tình hình để kịp release 11/11.<br>
+      Người phụ trách: PM (OFF 11/2, 11/4, 11/5).
+    </div>
+    <div class="card">
+      <h2>Bối cảnh</h2>
+      <p>LINE công bố lỗ hổng bảo mật ở LIFF SDK 2.20.0 đến 2.31.0. Không đổi chức năng, chỉ nâng phiên bản. Hạn cứng của LINE khoảng 11/24 và có thể bị đẩy sớm.</p>
+      <p>Mỗi bug thêm khoảng 3h QA re-verify cộng thời gian chờ FE sửa, có thể làm lùi release. Chi tiết trao đổi với AR xem trên Backlog ARWELL-1636.</p>
+    </div>
+    <div class="card">
+      <h2>Lịch</h2>
+      <div class="tbl"><table>
+        <tr><th>Ngày</th><th>Việc</th></tr>
+        <tr><td>10/29 – 11/1</td><td>QA test, 1 người</td></tr>
+        <tr><td>11/2 – 11/4</td><td>QA test trên UAT, 2 người</td></tr>
+        <tr><td>11/5 – 11/6</td><td>Đưa v2.31.2 lên STG</td></tr>
+        <tr><td>11/9 – 11/10</td><td>JP/AR check trên STG</td></tr>
+        <tr><td><b>11/11</b></td><td><b>Release</b> (PM chuẩn bị release ngày 6/11)</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Việc cần làm</h2>
+      <ul class="todo" data-key="1636">
+        <li><label><input type="checkbox"><span>11/2: hỏi QA tiến độ (2 QA bắt đầu trên UAT)</span></label></li>
+        <li><label><input type="checkbox"><span>11/4: hỏi QA tiến độ. Theo lịch QA xong UAT hôm nay, chưa xong thì báo sớm</span></label></li>
+        <li><label><input type="checkbox"><span>11/5: STG lên v2.31.2, báo QA</span></label></li>
+        <li><label><input type="checkbox"><span>Mỗi ngày hỏi QA: có vướng gì không, cần đối ứng gì thêm, có phát sinh gì không</span></label></li>
+        <li><label><input type="checkbox"><span>Có bug thì báo sớm cho JP. Nếu cần lùi lịch hoặc đổi ngày release thì chủ động trao đổi với JP và QA</span></label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Còn mở</h2>
+      <div class="tbl"><table>
+        <tr><th>Việc</th><th>Ghi chú</th></tr>
+        <tr class="hl"><td>AR đang hỏi: phạm vi test theo OS</td><td>PM sẽ trả lời trong tuần này</td></tr>
+        <tr class="hl"><td>AR đang hỏi: quy trình rollback (và diễn tập trên STG)</td><td>PM sẽ trả lời vào 3/11</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Tài liệu liên quan</h2>
+      <div class="tbl"><table>
+        <tr><td>Ticket</td><td>ARWELL-1636 (Backlog), trao đổi với AR xem ở đây</td></tr>
+        <tr><td>Thông báo của LINE</td><td><a href="https://developers.line.biz/ja/news/2026/10/20/liff-sdk-issue/" target="_blank" rel="noopener">LINE Developers News</a></td></tr>
+        <tr><td>Bảng version × flow test (QA lập)</td><td>Xem nội bộ</td></tr>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ================= 1639 ================= -->
+  <section role="tabpanel" id="p-1639" aria-labelledby="t-1639" hidden>
+    <div class="grid">
+      <div class="stat"><small>Việc</small><b>STAMP 1.5, 4 hạng mục</b></div>
+      <div class="stat"><small>Release</small><b>11/19 (Năm), bản 2.0.27</b></div>
+      <div class="stat"><small>FE</small><b>Xong, lên UAT 30/10</b></div>
+      <div class="stat"><small>BE</small><b>Lên UAT tuần 11/2</b></div>
+    </div>
+    <div class="note" style="margin-top:0;margin-bottom:16px">
+      <b>Nhờ mọi người giúp:</b> nắm spec để trao đổi với JP (tuần 9-13/11 team BrSE ở Nhật nên khó đối ứng liên tục), theo dõi JP phản hồi, và hỏi BE/QA tiến độ.<br>
+      Người phụ trách: PM (OFF 11/2, 11/4, 11/5). BE OFF 30/10.
+    </div>
+    <div class="card">
+      <h2>Bối cảnh</h2>
+      <p>Gom các yêu cầu bổ sung sau release stamp lần 1. Quan trọng nhất là ARWELL-1645: <b>phát 1 mã coupon dùng chung mỗi tháng</b> cho mọi user hoàn thành card (phương án B, AR đã đồng ý).</p>
+      <p>QA OT test API admin trước, vào tuần 11/2, để giảm tải tuần 9-13/11. Chi tiết spec xem ở file spec.md.</p>
+      <div class="tbl"><table>
+        <tr><th>#</th><th>Nội dung</th><th>Ticket</th></tr>
+        <tr><td>1</td><td>Phát 1 mã coupon dùng chung mỗi tháng (BE)</td><td>ARWELL-1645</td></tr>
+        <tr><td>2</td><td>Sửa câu chữ / hiển thị (LIFF, WEB, BE)</td><td>ARWELL-1646</td></tr>
+        <tr><td>3</td><td>Đổi tên field trạng thái stamp card (BE, DA)</td><td>ARWELL-1637</td></tr>
+        <tr><td>4</td><td>Thêm INDEX redirect vào log cộng stamp (BE, DA)</td><td>ARWELL-1638</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Lịch</h2>
+      <div class="tbl"><table>
+        <tr><th>Mốc</th><th>Ngày</th></tr>
+        <tr><td>FE lên UAT</td><td>30/10</td></tr>
+        <tr><td>BE lên UAT</td><td>Tuần 11/2</td></tr>
+        <tr><td>QA OT test API admin</td><td>Tuần 11/2</td></tr>
+        <tr><td>QA test phần còn lại</td><td>11/9 – 11/13</td></tr>
+        <tr><td>JP check / AR check</td><td>Từ 11/12 / từ 11/16</td></tr>
+        <tr><td>Xử lý feedback</td><td>11/16 – 11/18</td></tr>
+        <tr><td><b>Release 2.0.27</b></td><td><b>11/19</b></td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Việc cần làm</h2>
+      <ul class="todo" data-key="1639">
+        <li><label><input type="checkbox"><span>Đọc các file MD spec (JP làm chung với VN) để nắm nội dung và trao đổi với JP</span></label></li>
+        <li><label><input type="checkbox"><span>Theo dõi JP phản hồi sau khi VN gửi feedback spec (29/10)</span></label></li>
+        <li><label><input type="checkbox"><span>11/2 sáng: hỏi BE đã lên UAT chưa (QA OT cần API trên UAT)</span></label></li>
+        <li><label><input type="checkbox"><span>11/2 – 11/5: hỏi QA OT có lỗi chặn không</span></label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Còn mở</h2>
+      <div class="tbl"><table>
+        <tr><th>Việc</th><th>Ghi chú</th></tr>
+        <tr class="hl"><td>Câu hỏi spec cho BE</td><td>PM làm cùng BE trong hôm nay (29/10)</td></tr>
+        <tr><td>Ngày BE lên UAT</td><td>Chỉ biết là tuần 11/2</td></tr>
+        <tr><td>Đường dẫn file spec.md</td><td>Chưa gắn link</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Tài liệu liên quan</h2>
+      <div class="tbl"><table>
+        <tr><td>Ticket</td><td>ARWELL-1639 (Backlog), ticket con: 1645, 1646, 1637, 1638</td></tr>
+        <tr><td>Tài liệu AR, lịch 2.0.27, câu hỏi spec</td><td>Xem nội bộ</td></tr>
+      </table></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  var panels=tabs.map(function(t){return document.getElementById(t.getAttribute('aria-controls'));});
+  function show(i,focus){
+    tabs.forEach(function(t,j){
+      var on=i===j;
+      t.setAttribute('aria-selected',on);
+      t.tabIndex=on?0:-1;
+      panels[j].hidden=!on;
+    });
+    if(focus)tabs[i].focus();
+    try{history.replaceState(null,'','#'+tabs[i].id.slice(2));}catch(e){}
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(i);});
+    t.addEventListener('keydown',function(e){
+      var k=e.key,n=tabs.length;
+      if(k==='ArrowRight')show((i+1)%n,true);
+      else if(k==='ArrowLeft')show((i+n-1)%n,true);
+      else if(k==='Home')show(0,true);
+      else if(k==='End')show(n-1,true);
+    });
+  });
+  var h=(location.hash||'').slice(1);
+  var start=tabs.findIndex(function(t){return t.id==='t-'+h;});
+  if(start>0)show(start);
+
+  // Tick state is a per-viewer convenience only; works without storage.
+  document.querySelectorAll('ul.todo').forEach(function(ul){
+    var key='brse-board-'+ul.dataset.key,saved=[];
+    try{saved=JSON.parse(localStorage.getItem(key)||'[]');}catch(e){}
+    var boxes=ul.querySelectorAll('input');
+    boxes.forEach(function(b,i){
+      b.checked=!!saved[i];
+      b.addEventListener('change',function(){
+        var s=[].map.call(boxes,function(x){return x.checked;});
+        try{localStorage.setItem(key,JSON.stringify(s));}catch(e){}
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
